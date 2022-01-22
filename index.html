@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chancho</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+
+<body>
+<!-- SALA DE ESPERA -->
+<div id="inicio">
+    <h1>Chancho Game</h1>
+    <form id="name_form" action="">
+        <label for="">Nombre: </label>
+        <input id="name_input" autocomplete="off" /><button>Jugar</button>
+    </form>
+
+    <ul id="player_list">
+    </ul>
+    <h2>Jugadores: <span id="n_players">0</span>/6</h2>
+    <h3>Mínimo: 4</h3>
+    <img src="static/pig.png" alt="">
+    <button id='start_game' style="visibility: hidden;color: black;">Empezar</button>
+
+</div>
+
+<img class= 'icon'src="static/icon.png" alt="">
+<img class="chancho" src="static/chancho vacio.png" alt="">
+
+<div class="mazo">
+    <div class="carta" id="1">
+        <img class="carta_img" src="static/chancho card.png" alt="">
+        <h1 class="number" id="n1">1</h1>
+    </div>
+    <div class="carta" id="2">
+        <img class="carta_img" src="static/chancho card.png" alt="">
+        <h1 class="number" id="n2">2</h1>
+    </div>
+    <div class="carta" id="3">
+        <img class="carta_img" src="static/chancho card.png" alt="">
+        <h1 class="number" id="n3">2</h1>
+    </div>
+    <div class="carta" id="4" >
+        <img class="carta_img" src="static/chancho card.png" alt="">
+        <h1 class="number" id="n4">2</h1>
+    </div>
+</div>
+
+<div id="panel" style="visibility: hidden;">
+    <button class="buttons" id="l1">1 a la izquierda</button>
+    <button class="buttons" id="l2">2 a la izquierda</button>
+    <button class="buttons" id="l3">3 a la izquierda</button>
+    <button class="buttons" id="r1">1 a la derecha</button>
+    <button class="buttons" id="r2">2 a la derecha</button>
+    <button class="buttons" id="r3">3 a la derecha</button>
+
+</div>
+
+<button id="confirmar">confirmar</button>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io();
+    var sala_espera = document.getElementById('inicio')
+    var name_input = document.getElementById('name_input')
+    var name_form = document.getElementById('name_form');
+    var player_list = document.getElementById("player_list");
+    var n_players = document.getElementById('n_players');
+    var start_button = document.getElementById('start_game');
+    var panel = document.getElementById('panel');
+    var confirm_button = document.getElementById('confirmar');
+    //states
+    var is_admin = false;
+    var can_choose = false;
+    var can_select_card = false;
+    var n_to_select;
+
+    //objects
+    var cartas = document.getElementsByClassName('carta');
+
+    var cart_n = [document.getElementById("n1"),document.getElementById("n2"),
+    document.getElementById("n3"),document.getElementById("n4")];
+
+    //user info
+    var user_deck = [0,0,0,0];
+    var selected_deck = [0,0,0,0];
+    var selected_n = 0;
+
+    var buttons = document.getElementsByClassName('buttons'); //l1 a l3,r1 a r3
+
+    document.getElementById("name_form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    if (name_input.value) {
+        socket.emit('set_name', name_input.value);
+        name_input.value = '';
+        name_form.style.visibility = 'hidden';
+        n_players.innerHTML = 1;
+    }
+    });
+    socket.on('add_player', function (name) {
+        var li = document.createElement('li');
+        li.innerHTML= name; 
+        player_list.appendChild(li);
+    });
+
+    socket.on('set_admin', function () {
+        is_admin = true;
+        start_button.style.visibility = 'visible';
+    });
+
+    start_button.addEventListener('click', function(e) {
+        socket.emit('start_game');
+    });
+
+    socket.on('initial_deck', function (deck) { 
+        sala_espera.style.visibility = 'hidden';
+        start_button.style.visibility = 'hidden';  
+        for(var i =0; i<4;i++){
+            cart_n[i].innerHTML = deck[i];
+            user_deck[i] = deck[i];
+        }
+        if(is_admin = true){
+            panel.style.visibility = 'visible';
+            can_choose =true;
+        }
+    });
+    //admin selecciona opcion l1
+    buttons[0].addEventListener('click',function(e) {
+        if(can_choose){
+            can_choose =false;
+            socket.emit('l1b');
+        }
+    });
+
+    socket.on('l1',function (x) { 
+        n_to_select = 1;
+        can_select_card = true;
+    });
+
+    socket.on('update_deck', function (x) { 
+        
+    });
+
+    // cartas[0].addEventListener('click',function(e) {
+    //     if(selected_deck[0] == 0){
+    //         cart_n[0].style.backgroundColor = 'green';
+    //         selected_deck[0] = deck[0];
+    //         selected_n += 1;
+    //     }
+    //     else{
+
+    //     }
+    // });
+
+    for(var i =0; i<4;i++){
+        cartas[i].addEventListener("click", function() {
+            if(selected_deck[i] == 0){
+                cart_n[i].setAttribute("style", "backgroundColor:green;");
+                selected_deck[i] = deck[i];
+                selected_n += 1;
+            }
+            else{
+                cart_n[i].style.backgroundColor = 'white';
+                selected_n -= 1;
+                selected_deck[i] =0;
+            }
+        });
+    }
+
+    confirm_button.addEventListener("click", function() {
+        if(can_select_card && selected_n == n_to_select){
+            can_select_card = false;
+            socket.emit('upload_selection')
+        }
+    });
+
+    
+
+
+
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+body{
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    background-image: url('https://previews.123rf.com/images/peshkov/peshkov1610/peshkov161000483/64244331-top-view-of-empty-conference-table-and-chairs-on-concrete-floor-mock-up-3d-rendering.jpg');
+}
+
+#inicio{
+    background-color: black;
+    width: 99%;
+    height: 95vh;
+    position: absolute;
+    overflow: hidden;
+    z-index: 2000;
+}
+#inicio >*{
+    color: blanchedalmond;
+    margin-left: 2%;
+}
+
+.icon{
+    width: 10%;
+    position: fixed;
+    top:70%;
+    left: 20%;
+}
+.chancho{
+    width: 40%;
+    position: fixed;
+    top:42%;
+    left: 30%;
+}
+.chancho:hover{
+    cursor: pointer;
+}
+
+.carta{
+    width: 15%;
+    position: relative;
+    display: inline;
+}
+.carta_img{
+    width: 15%;
+    position: relative;
+    display: inline;
+}
+.mazo{
+    position: fixed;
+    bottom: 0%;
+    left: 30%;
+}
+.number{
+    position: absolute;
+    bottom: 80%;
+    left: 35%;
+
+  /* z-index: -1; */
+}
+
+h1{
+    font-size: 5vw;
+}
+#panel{
+    position: fixed;
+    bottom: 5%;
+    right: 10%;
+}
+#confirmar{
+    position: fixed;
+    bottom: 10%;
+    left: 15%;
+    color: black;
+}
+.buttons{
+    color: black;
+}
