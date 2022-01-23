@@ -89,13 +89,13 @@
     var buttons = document.getElementsByClassName('buttons'); //l1 a l3,r1 a r3
 
     document.getElementById("name_form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    if (name_input.value) {
-        socket.emit('set_name', name_input.value);
-        name_input.value = '';
-        name_form.style.visibility = 'hidden';
-        n_players.innerHTML = 1;
-    }
+        e.preventDefault();
+        if (name_input.value) {
+            socket.emit('set_name', name_input.value);
+            name_input.value = '';
+            name_form.style.visibility = 'hidden';
+            n_players.innerHTML = 1;
+        }
     });
     socket.on('add_player', function (name) {
         var li = document.createElement('li');
@@ -125,25 +125,12 @@
         }
     });
 
-    //admin selecciona opcion l1
-    buttons[0].addEventListener('click',function(e) {
-        if(can_choose){
-            can_choose =false;
-            socket.emit('l1b');
-        }
-    });
-
-    socket.on('l1',function (x) { 
-        n_to_select = 1;
-        can_select_card = true;
-        window.alert('1 a la izquierda');
-    });
-
     socket.on('update_deck', function (deck) { 
-        for(var i =0; i<4;i++){
+        for(let i =0; i<4;i++){
             cart_n[i].innerHTML = deck[i];
             user_deck[i] = deck[i];
         }
+        can_choose =true;
     });
 
     cartas[0].addEventListener('click',function(e) {
@@ -198,15 +185,51 @@
     confirm_button.addEventListener("click", function() {
         if(can_select_card == true && selected_n == n_to_select){
             can_select_card = false;
-            window.alert('input aceptado')
+            window.alert('input aceptado');
             socket.emit('upload_selection', selected_deck);
         }
     });
 
-    
+        //admin selecciona opcion l1
+    buttons[0].addEventListener('click',function(e) {
+        if(can_choose){
+            can_choose =false;
+            socket.emit('l1b');
+        }
+    });
 
+    socket.on('l1',function (x) { 
+        n_to_select = 1;
+        can_select_card = true;
+        window.alert('1 a la izquierda');
+    });
 
+        //admin selecciona opcion l2
+    buttons[1].addEventListener('click',function(e) {
+        if(can_choose){
+            can_choose =false;
+            socket.emit('l2b');
+        }
+    });
 
+    socket.on('l2',function (x) { 
+        n_to_select = 2;
+        can_select_card = true
+        window.alert('2 a la izquierda');
+    });
+        //admin selecciona opcion l3
+    buttons[2].addEventListener('click',function(e) {
+        if(can_choose){
+            can_choose =false;
+            socket.emit('l3b');
+        }
+    });
+
+    socket.on('l3',function (x) { 
+        n_to_select = 3;
+        can_select_card = true;
+        window.alert('3 a la izquierda');
+    });
 
 </script>
 

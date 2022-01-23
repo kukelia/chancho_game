@@ -91,6 +91,12 @@ io.on("connection", (socket) => {
    socket.on('l1b', function () { 
       io.emit('l1');
    });
+   socket.on('l2b', function () { 
+      io.emit('l2');
+   });
+   socket.on('l3b', function () { 
+      io.emit('l3');
+   });
 
    socket.on('upload_selection',function (selected_deck) {  //aca
       n_uploaded +=1;
@@ -103,25 +109,26 @@ io.on("connection", (socket) => {
 
 });
 
+
 function update_decks(){
-   for(var i =0; i<users.length;i++){
+   for(let i =0; i<users.length;i++){
       var aux =-1;
 
-      for(var j=0; j<4;j++){
+      for(let j=0; j<4;j++){
 
          if(decks[i][j] == temp_deck[i][j]){
-            decks[i][j] == 0;
+            
             do{
                aux += 1;
                if(temp_deck[(i-1 % users.length + users.length) % users.length][aux] != 0){
                   decks[i][j] = temp_deck[(i-1 % users.length + users.length) % users.length][aux];
                   console.log('replaced value');
                }
-            }while(temp_deck[(i % users.length + users.length) % users.length][aux] == 0);
+            }while(temp_deck[(i-1 % users.length + users.length) % users.length][aux] == 0);
          }
       }
    }
-   aux =-1;
+   aux = -1;
    send_decks();
 }
 
