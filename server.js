@@ -24,16 +24,15 @@ function shuffle(array) {
      [array[currentIndex], array[randomIndex]] = [
        array[randomIndex], array[currentIndex]];
    }
- 
    return array;
  }
 var cards_by_players =[
    [1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4],                 //4 players
    [1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5],         //5 players
    [1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6]  //6 players
-]
+];
 
-var users = []
+var users = [];
 var decks = [
    [0,0,0,0], //player 1
    [0,0,0,0], //player 2
@@ -41,7 +40,7 @@ var decks = [
    [0,0,0,0], //player 4
    [0,0,0,0], //player 5
    [0,0,0,0]  //player 6
-]
+];
 var temp_deck=[
    [0,0,0,0], //player 1
    [0,0,0,0], //player 2
@@ -49,7 +48,7 @@ var temp_deck=[
    [0,0,0,0], //player 4
    [0,0,0,0], //player 5
    [0,0,0,0]  //player 6
-]
+];
 var user_data=[
    [''],
    [''],
@@ -57,8 +56,9 @@ var user_data=[
    [''],
    [''],
    ['']
-]
+];
 var arr_shuffled;
+var n_uploaded = 0;
 
 io.on("connection", (socket) => {
 
@@ -71,15 +71,15 @@ io.on("connection", (socket) => {
 
    socket.on('set_name', function(name){
       user_data[users.indexOf(socket.id)][0] = name;
-      console.log(socket.id, 'logged')
       io.emit('add_player', name);
-      console.log(name, 'is the name!!')
+      console.log(name, 'connected!!')
       if(socket.id == users[0]){
          io.to(socket.id).emit('set_admin');
+         console.log(socket.id, 'is admin')
       }
    });
    socket.on('start_game', function () {   
-      arr_shuffled = shuffle(cards_by_players[users.length-4]);
+      arr_shuffled = shuffle(cards_by_players[users.length-4]); //menos 4 porque tiene 3 elementos en vez de 6
       for(var i =0; i<users.length;i++){
          for(var j=0; j<4;j++){
             decks[i][j] = arr_shuffled[i*4 + j];
@@ -90,15 +90,48 @@ io.on("connection", (socket) => {
 
    socket.on('l1b', function () { 
       io.emit('l1');
-
    });
 
-   socket.on('upload_selection',function () {  //aca
-     
-
+   socket.on('upload_selection',function (selected_deck) {  //aca
+      n_uploaded +=1;
+      temp_deck[users.indexOf(socket.id)] = selected_deck;
+      if(n_uploaded == users.length){
+         update_decks();
+         n_uploaded = 0;
+      }
    });
 
 });
 
+function update_decks(){
+   for(var i =0; i<users.length;i++){
+      var aux =-1;
+
+      for(var j=0; j<4;j++){
+
+         if(decks[i][j] == temp_deck[i][j]){
+            decks[i][j] == 0;
+            do{
+               aux += 1;
+               if(temp_deck[(i-1 % users.length + users.length) % users.length][aux] != 0){
+                  decks[i][j] = temp_deck[(i-1 % users.length + users.length) % users.length][aux];
+                  console.log('replaced value');
+               }
+            }while(temp_deck[(i % users.length + users.length) % users.length][aux] == 0);
+         }
+      }
+   }
+   aux =-1;
+   send_decks();
+}
+
+function send_decks(){
+   console.log('starting to send new decks');
+   for(var i =0; i<users.length;i++){
+      io.to(users[i]).emit('update_deck', decks[i]);
+   }
+}
+
 // arr[(i % n + n) % n]
 // socket.on('', function () {   });
+//i % users.length + users.length) % users.length

@@ -8,7 +8,7 @@
 <body>
 <!-- SALA DE ESPERA -->
 <div id="inicio">
-    <h1>Chancho Game</h1>
+    <h1>Chancho Game (by zubik)</h1>
     <form id="name_form" action="">
         <label for="">Nombre: </label>
         <input id="name_input" autocomplete="off" /><button>Jugar</button>
@@ -119,11 +119,12 @@
             cart_n[i].innerHTML = deck[i];
             user_deck[i] = deck[i];
         }
-        if(is_admin = true){
+        if(is_admin == true){
             panel.style.visibility = 'visible';
             can_choose =true;
         }
     });
+
     //admin selecciona opcion l1
     buttons[0].addEventListener('click',function(e) {
         if(can_choose){
@@ -135,42 +136,70 @@
     socket.on('l1',function (x) { 
         n_to_select = 1;
         can_select_card = true;
+        window.alert('1 a la izquierda');
     });
 
-    socket.on('update_deck', function (x) { 
-        
+    socket.on('update_deck', function (deck) { 
+        for(var i =0; i<4;i++){
+            cart_n[i].innerHTML = deck[i];
+            user_deck[i] = deck[i];
+        }
     });
 
-    // cartas[0].addEventListener('click',function(e) {
-    //     if(selected_deck[0] == 0){
-    //         cart_n[0].style.backgroundColor = 'green';
-    //         selected_deck[0] = deck[0];
-    //         selected_n += 1;
-    //     }
-    //     else{
-
-    //     }
-    // });
-
-    for(var i =0; i<4;i++){
-        cartas[i].addEventListener("click", function() {
-            if(selected_deck[i] == 0){
-                cart_n[i].setAttribute("style", "backgroundColor:green;");
-                selected_deck[i] = deck[i];
-                selected_n += 1;
-            }
-            else{
-                cart_n[i].style.backgroundColor = 'white';
-                selected_n -= 1;
-                selected_deck[i] =0;
-            }
-        });
-    }
+    cartas[0].addEventListener('click',function(e) {
+        if(selected_deck[0] == 0){
+            cart_n[0].style.backgroundColor = 'green';
+            selected_deck[0] = user_deck[0];
+            selected_n += 1;
+        }
+        else{
+            cart_n[0].style.backgroundColor = 'white';
+            selected_n -= 1;
+            selected_deck[0] =0;
+        }
+    });
+    cartas[1].addEventListener('click',function(e) {
+        if(selected_deck[1] == 0){
+            cart_n[1].style.backgroundColor = 'green';
+            selected_deck[1] = user_deck[1];
+            selected_n += 1;
+        }
+        else{
+            cart_n[1].style.backgroundColor = 'white';
+            selected_n -= 1;
+            selected_deck[1] =0;
+        }
+    });
+    cartas[2].addEventListener('click',function(e) {
+        if(selected_deck[2] == 0){
+            cart_n[2].style.backgroundColor = 'green';
+            selected_deck[2] = user_deck[2];
+            selected_n += 1;
+        }
+        else{
+            cart_n[2].style.backgroundColor = 'white';
+            selected_n -= 1;
+            selected_deck[2] =0;
+        }
+    });
+    cartas[3].addEventListener('click',function(e) {
+        if(selected_deck[3] == 0){
+            cart_n[3].style.backgroundColor = 'green';
+            selected_deck[3] = user_deck[3];
+            selected_n += 1;
+        }
+        else{
+            cart_n[3].style.backgroundColor = 'white';
+            selected_n -= 1;
+            selected_deck[3] =0;
+        }
+    });
 
     confirm_button.addEventListener("click", function() {
-        if(can_select_card && selected_n == n_to_select){
+        if(can_select_card == true && selected_n == n_to_select){
             can_select_card = false;
-            socket.emit('upload_selection')
+            window.alert('input aceptado')
+            socket.emit('upload_selection', selected_deck);
         }
     });
 
