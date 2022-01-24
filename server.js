@@ -49,32 +49,35 @@ var temp_deck=[
    [0,0,0,0], //player 5
    [0,0,0,0]  //player 6
 ];
-var user_data=[
-   [''],
-   [''],
-   [''],
-   [''],
-   [''],
-   ['']
-];
+
+var user_dict = {};
 var arr_shuffled;
 var n_uploaded = 0;
 var lista_chancho = [];
+var setted_name =0;
 
 io.on("connection", (socket) => {
 
+   socket.emit('retrieve_names', user_dict,users);
    users.push(socket.id)
+   
+
    //Whenever someone disconnects this piece of code executed
    socket.on('disconnect', function () {
       console.log('A user disconnected');
       users.splice(users.indexOf(socket.id) ,1);
+      setted_name -=1;
+      delete user_dict[socket.id];
    });
+   //delete dict[x]
 
    socket.on('set_name', function(name){
-      user_data[users.indexOf(socket.id)][0] = name;
-      io.emit('add_player', name);
+      user_dict[socket.id] = name
+      setted_name +=1;
+      io.emit('add_player', name,setted_name);
       console.log(name, 'connected!!')
-      if(socket.id == users[0]){
+
+      if(socket.id == users[0]){ //PARA HACER ADMIN
          io.to(socket.id).emit('set_admin');
          console.log(socket.id, 'is admin')
       }
@@ -123,7 +126,7 @@ io.on("connection", (socket) => {
       }
       socket.emit('chancho_input_aceptado');
       if(lista_chancho.length == users.length){
-         io.emit('resultado_chancho', user_data[users.indexOf( lista_chancho.at(-1) ) ][0] );
+         io.emit('resultado_chancho', user_dict[lista_chancho.at(-1) ] );
       }
 
    });

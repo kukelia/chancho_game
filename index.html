@@ -104,14 +104,28 @@
             socket.emit('set_name', name_input.value);
             name_input.value = '';
             name_form.style.visibility = 'hidden';
-            n_players.innerHTML = 1;
         }
     });
-    socket.on('add_player', function (name) {
-        var li = document.createElement('li');
+    socket.on('add_player', function (name,n) {
+        let li = document.createElement('li');
         li.innerHTML= name; 
         player_list.appendChild(li);
+        n_players.innerHTML = n;
     });
+
+    socket.on('retrieve_names', function (user_dict,users) {
+        let aux = 0;
+        for(let i =0;i<users.length;i++){     
+            if(user_dict[users[i]] != undefined){     
+                aux+=1;
+                let li = document.createElement('li');
+                li.innerHTML= user_dict[users[i]]; 
+                player_list.appendChild(li);
+            } 
+        
+        }
+        n_players.innerHTML = aux;
+       });
 
     socket.on('set_admin', function () {
         is_admin = true;
@@ -294,6 +308,7 @@
     socket.on('resultado_chancho', function (name) {
         window.alert('Perdio '+ name + '!!');
     });
+    
 
 
 </script>
