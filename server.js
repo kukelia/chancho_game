@@ -68,8 +68,9 @@ io.on("connection", (socket) => {
       users.splice(users.indexOf(socket.id) ,1);
       setted_name -=1;
       delete user_dict[socket.id];
+      io.emit('back_to_menu')
+      io.emit('retrieve_names', user_dict,users);
    });
-   //delete dict[x]
 
    socket.on('set_name', function(name){
       user_dict[socket.id] = name
@@ -82,13 +83,16 @@ io.on("connection", (socket) => {
          console.log(socket.id, 'is admin')
       }
    });
-   socket.on('start_game', function () {   
-      arr_shuffled = shuffle(cards_by_players[users.length-4]); //menos 4 porque tiene 3 elementos en vez de 6
-      for(var i =0; i<users.length;i++){
-         for(var j=0; j<4;j++){
-            decks[i][j] = arr_shuffled[i*4 + j];
+   socket.on('start_game', function () { 
+      console.log(setted_name +' is setted name');
+      if(setted_name >=4){  
+         arr_shuffled = shuffle(cards_by_players[users.length-4]); //menos 4 porque tiene 3 elementos en vez de 6
+         for(var i =0; i<users.length;i++){
+            for(var j=0; j<4;j++){
+               decks[i][j] = arr_shuffled[i*4 + j];
+            }
+            io.to(users[i]).emit('initial_deck', decks[i]);
          }
-         io.to(users[i]).emit('initial_deck', decks[i]);
       }
    });
 
@@ -170,3 +174,4 @@ function send_decks(){
 // arr[(i % n + n) % n]
 // socket.on('', function () {   });
 //i % users.length + users.length) % users.length
+ //delete dict[x]

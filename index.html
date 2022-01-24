@@ -138,7 +138,11 @@
 
     socket.on('initial_deck', function (deck) { 
         sala_espera.style.visibility = 'hidden';
-        start_button.style.visibility = 'hidden';  
+        start_button.style.visibility = 'hidden';
+        //ACA
+        while (player_list.lastElementChild) {
+            player_list.removeChild(player_list.lastElementChild);
+        }  
         for(var i =0; i<4;i++){
             cart_n[i].innerHTML = deck[i];
             user_deck[i] = deck[i];
@@ -308,8 +312,16 @@
     socket.on('resultado_chancho', function (name) {
         window.alert('Perdio '+ name + '!!');
     });
-    
+    socket.on('back_to_menu', function () {
+        sala_espera.style.visibility = 'visible';
+        if(is_admin){
+            start_button.style.visibility = 'visible';
+        }
+    });
 
+    //3 botones a la derecha faltan
+
+    // socket.on('', function () {   });
 
 </script>
 
