@@ -59,6 +59,7 @@ var user_data=[
 ];
 var arr_shuffled;
 var n_uploaded = 0;
+var lista_chancho = [];
 
 io.on("connection", (socket) => {
 
@@ -113,6 +114,18 @@ io.on("connection", (socket) => {
             update_decks();
             n_uploaded = 0;
       }
+   });
+
+   socket.on('chancho',function () {  
+      lista_chancho.push(socket.id);
+      if(lista_chancho.length == 1){
+         io.emit('poder_chanchear');
+      }
+      socket.emit('chancho_input_aceptado');
+      if(lista_chancho.length == users.length){
+         io.emit('resultado_chancho', user_data[users.indexOf(lista_chancho.at(-1))] );
+      }
+      
    });
 
 });

@@ -23,11 +23,12 @@ body{
     top:70%;
     left: 20%;
 }
-.chancho{
+#chancho{
     width: 40%;
     position: fixed;
     top:42%;
     left: 30%;
+    filter: grayscale(100%);
 }
 .chancho:hover{
     cursor: pointer;

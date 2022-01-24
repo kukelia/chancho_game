@@ -24,7 +24,7 @@
 </div>
 
 <img class= 'icon'src="static/icon.png" alt="">
-<img class="chancho" src="static/chancho vacio.png" alt="">
+<img id="chancho" src="static/chancho verde.png" alt="">
 <img id="tick" src="static/green_tick.png" alt="">
 
 <div class="mazo">
@@ -53,12 +53,16 @@
     <button class="buttons" id="r1">1 a la derecha</button>
     <button class="buttons" id="r2">2 a la derecha</button>
     <button class="buttons" id="r3">3 a la derecha</button>
-
 </div>
 
 <button id="confirmar">confirmar</button>
 
+
+
 <script src="/socket.io/socket.io.js"></script>
+
+<!-- ////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////// -->
 
 <script>
     const socket = io();
@@ -70,6 +74,7 @@
     var start_button = document.getElementById('start_game');
     var panel = document.getElementById('panel');
     var confirm_button = document.getElementById('confirmar');
+    var chancho_img = document.getElementById('chancho');
     //states
     var is_admin = false;
     var can_choose = false;
@@ -87,6 +92,7 @@
     var user_deck = [0,0,0,0];
     var selected_deck = [0,0,0,0];
     var selected_n = 0;
+    var puede_chanchear = false;
 
     var buttons = document.getElementsByClassName('buttons'); //l1 a l3,r1 a r3
 
@@ -127,6 +133,7 @@
         }
     });
 
+    //MUY IMPORTANTE
     socket.on('update_deck', function (deck) { 
         for(let i =0; i<4;i++){
             cart_n[i].innerHTML = deck[i];
@@ -140,6 +147,17 @@
         cart_n[2].style.backgroundColor = 'white';
         cart_n[3].style.backgroundColor = 'white';
         tick.style.filter = 'grayscale(100%)';
+        let aux = true;
+        for(let i =1; i<4;i++){
+            if(deck[i] != deck[0]){
+                aux = false;
+            }
+        }
+        if(aux == true){
+            window.alert('podes chanchear!!');
+            puede_chanchear = true;
+            chancho_img.style.filter = 'grayscale(50%)';
+        }
     });
 
     cartas[0].addEventListener('click',function(e) {
@@ -240,6 +258,40 @@
         can_select_card = true;
         window.alert('3 a la izquierda');
     });
+
+    socket.on('poder_chanchear', function () {
+        puede_chanchear = true;
+        chancho_img.style.filter = 'grayscale(50%)';
+       });
+
+    chancho_img.addEventListener('click',function() {
+        if(puede_chanchear){
+            puede_chanchear = false;
+            socket.emit('chancho');
+        }
+    });
+
+    socket.on('chancho_input_aceptado', function () { 
+        chancho_img.style.filter = 'grayscale(0%)';
+      });
+    
+    socket.on('resultado_chancho', function (name) {
+        window.alert('Perdio',name,'!!!');
+    });
+
+    function can_chanch(){
+        let aux = true;
+        for(let i =1; i<4;i++){
+            if(deck[i] != deck[0]){
+                aux = false;
+            }
+        }
+        if(aux == true){
+            window.alert('podes chanchear!!');
+            puede_chanchear = true;
+            chancho_img.style.filter = 'grayscale(50%)';
+        }
+    }
 
 </script>
 
