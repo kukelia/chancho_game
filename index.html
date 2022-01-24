@@ -25,6 +25,7 @@
 
 <img class= 'icon'src="static/icon.png" alt="">
 <img class="chancho" src="static/chancho vacio.png" alt="">
+<img id="tick" src="static/green_tick.png" alt="">
 
 <div class="mazo">
     <div class="carta" id="1">
@@ -74,6 +75,7 @@
     var can_choose = false;
     var can_select_card = false;
     var n_to_select;
+    var tick = document.getElementById("tick");
 
     //objects
     var cartas = document.getElementsByClassName('carta');
@@ -130,7 +132,14 @@
             cart_n[i].innerHTML = deck[i];
             user_deck[i] = deck[i];
         }
-        can_choose =true;
+        can_choose =true; //para admin, poder elegir siguiente movimiento
+        selected_deck = [0,0,0,0];
+        selected_n = 0;
+        cart_n[0].style.backgroundColor = 'white';
+        cart_n[1].style.backgroundColor = 'white';
+        cart_n[2].style.backgroundColor = 'white';
+        cart_n[3].style.backgroundColor = 'white';
+        tick.style.filter = 'grayscale(100%)';
     });
 
     cartas[0].addEventListener('click',function(e) {
@@ -182,11 +191,12 @@
         }
     });
 
+    //enviar eleccion
     confirm_button.addEventListener("click", function() {
         if(can_select_card == true && selected_n == n_to_select){
             can_select_card = false;
-            window.alert('input aceptado');
             socket.emit('upload_selection', selected_deck);
+            tick.style.filter = 'grayscale(0%)';
         }
     });
 

@@ -73,3 +73,11 @@ h1{
 .buttons{
     color: black;
 }
+#tick{
+    filter: grayscale(100%);
+    position: fixed;
+    bottom: 15%;
+    left: 15%;
+    color: black;
+    width: 10%;
+}

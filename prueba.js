@@ -41,6 +41,4 @@ function update_decks(){
 }
 
 console.log('decks after')
-for(var i =0; i<users.length;i++){
-    console.log(decks[i][0],decks[i][1],decks[i][2],decks[i][3])
-}
+

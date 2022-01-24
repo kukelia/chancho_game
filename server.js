@@ -102,8 +102,16 @@ io.on("connection", (socket) => {
       n_uploaded +=1;
       temp_deck[users.indexOf(socket.id)] = selected_deck;
       if(n_uploaded == users.length){
-         update_decks();
-         n_uploaded = 0;
+            console.log('impresion de decks en server antes');
+            for(let i =0; i<users.length;i++){
+               console.log(decks[i][0],decks[i][1],decks[i][2],decks[i][3]);
+            }
+            console.log('impresion de temp_decks antes');
+            for(var i =0; i<users.length;i++){
+               console.log(temp_deck[i][0],temp_deck[i][1],temp_deck[i][2],temp_deck[i][3]);
+            }
+            update_decks();
+            n_uploaded = 0;
       }
    });
 
@@ -134,8 +142,12 @@ function update_decks(){
 
 function send_decks(){
    console.log('starting to send new decks');
-   for(var i =0; i<users.length;i++){
+   for(let i =0; i<users.length;i++){
       io.to(users[i]).emit('update_deck', decks[i]);
+   }
+   console.log('impresion de decks en server dsp');
+   for(let i =0; i<users.length;i++){
+      console.log(decks[i][0],decks[i][1],decks[i][2],decks[i][3]);
    }
 }
 
