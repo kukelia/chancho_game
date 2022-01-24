@@ -82,3 +82,13 @@ h1{
     color: black;
     width: 10%;
 }
+#log{
+    background-color: black;
+    position: fixed;
+    top: 10%;
+    left: 40%;
+    width: 25%;
+}
+#log_text{
+    color: white;
+}

@@ -123,9 +123,9 @@ io.on("connection", (socket) => {
       }
       socket.emit('chancho_input_aceptado');
       if(lista_chancho.length == users.length){
-         io.emit('resultado_chancho', user_data[users.indexOf(lista_chancho.at(-1))] );
+         io.emit('resultado_chancho', user_data[users.indexOf( lista_chancho.at(-1) ) ][0] );
       }
-      
+
    });
 
 });

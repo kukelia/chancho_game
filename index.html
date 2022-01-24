@@ -20,12 +20,14 @@
     <h3>Mínimo: 4</h3>
     <img src="static/pig.png" alt="">
     <button id='start_game' style="visibility: hidden;color: black;">Empezar</button>
-
 </div>
 
 <img class= 'icon'src="static/icon.png" alt="">
 <img id="chancho" src="static/chancho verde.png" alt="">
 <img id="tick" src="static/green_tick.png" alt="">
+<div id="log">
+    <h2 id="log_text">Chancho arriba</h2>
+</div>
 
 <div class="mazo">
     <div class="carta" id="1">
@@ -75,6 +77,7 @@
     var panel = document.getElementById('panel');
     var confirm_button = document.getElementById('confirmar');
     var chancho_img = document.getElementById('chancho');
+    var log_text = document.getElementById('log_text');
     //states
     var is_admin = false;
     var can_choose = false;
@@ -93,7 +96,6 @@
     var selected_deck = [0,0,0,0];
     var selected_n = 0;
     var puede_chanchear = false;
-
     var buttons = document.getElementsByClassName('buttons'); //l1 a l3,r1 a r3
 
     document.getElementById("name_form").addEventListener("submit", function(e) {
@@ -131,6 +133,18 @@
             panel.style.visibility = 'visible';
             can_choose =true;
         }
+        //to optimize
+        let aux = true;
+        for(let i =1; i<4;i++){
+            if(deck[i] != deck[0]){
+                aux = false;
+            }
+        }
+        if(aux == true){
+            window.alert('podes chanchear!!');
+            puede_chanchear = true;
+            chancho_img.style.filter = 'grayscale(60%)';
+        }
     });
 
     //MUY IMPORTANTE
@@ -147,6 +161,8 @@
         cart_n[2].style.backgroundColor = 'white';
         cart_n[3].style.backgroundColor = 'white';
         tick.style.filter = 'grayscale(100%)';
+        log_text.innerHTML = 'esperando siguiente orden';
+        //to optimize
         let aux = true;
         for(let i =1; i<4;i++){
             if(deck[i] != deck[0]){
@@ -156,7 +172,7 @@
         if(aux == true){
             window.alert('podes chanchear!!');
             puede_chanchear = true;
-            chancho_img.style.filter = 'grayscale(50%)';
+            chancho_img.style.filter = 'grayscale(60%)';
         }
     });
 
@@ -229,7 +245,7 @@
     socket.on('l1',function (x) { 
         n_to_select = 1;
         can_select_card = true;
-        window.alert('1 a la izquierda');
+        log_text.innerHTML = '1 a la izquierda';
     });
 
         //admin selecciona opcion l2
@@ -243,7 +259,7 @@
     socket.on('l2',function (x) { 
         n_to_select = 2;
         can_select_card = true
-        window.alert('2 a la izquierda');
+        log_text.innerHTML = '2 a la izquierda';
     });
         //admin selecciona opcion l3
     buttons[2].addEventListener('click',function(e) {
@@ -256,7 +272,7 @@
     socket.on('l3',function (x) { 
         n_to_select = 3;
         can_select_card = true;
-        window.alert('3 a la izquierda');
+        log_text.innerHTML = '3 a la izquierda';
     });
 
     socket.on('poder_chanchear', function () {
@@ -276,22 +292,9 @@
       });
     
     socket.on('resultado_chancho', function (name) {
-        window.alert('Perdio',name,'!!!');
+        window.alert('Perdio '+ name + '!!');
     });
 
-    function can_chanch(){
-        let aux = true;
-        for(let i =1; i<4;i++){
-            if(deck[i] != deck[0]){
-                aux = false;
-            }
-        }
-        if(aux == true){
-            window.alert('podes chanchear!!');
-            puede_chanchear = true;
-            chancho_img.style.filter = 'grayscale(50%)';
-        }
-    }
 
 </script>
 
