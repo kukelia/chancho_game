@@ -1,4 +1,5 @@
 const app = require('express')();
+const { sign } = require('crypto');
 var express = require('express');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
@@ -51,10 +52,12 @@ var temp_deck=[
 ];
 
 var user_dict = {};
+var puntaje = {};
 var arr_shuffled;
 var n_uploaded = 0;
 var lista_chancho = [];
 var setted_name =0;
+let signo = 1; //-1 es izquierda, 1 es derecha
 
 io.on("connection", (socket) => {
 
@@ -67,13 +70,15 @@ io.on("connection", (socket) => {
       console.log('A user disconnected');
       users.splice(users.indexOf(socket.id) ,1);
       setted_name -=1;
+      delete puntaje[user_dict[socket.id]];
       delete user_dict[socket.id];
-      io.emit('back_to_menu')
+      io.emit('back_to_menu');
       io.emit('retrieve_names', user_dict,users);
    });
 
    socket.on('set_name', function(name){
       user_dict[socket.id] = name
+      puntaje[name] = '';
       setted_name +=1;
       io.emit('add_player', name,setted_name);
       console.log(name, 'connected!!')
@@ -97,18 +102,34 @@ io.on("connection", (socket) => {
    });
 
    socket.on('l1b', function () { 
+      signo = -1;
       io.emit('l1');
    });
    socket.on('l2b', function () { 
+      signo = -1;
       io.emit('l2');
    });
-   socket.on('l3b', function () { 
+   socket.on('l3b', function () {
+      signo = -1; 
       io.emit('l3');
+   });
+   socket.on('r1b', function () {
+      signo = 1; 
+      io.emit('r1');
+   });
+   socket.on('r2b', function () {
+      signo = 1; 
+      io.emit('r2');
+   });
+   socket.on('r3b', function () {
+      signo = 1; 
+      io.emit('r3');
    });
 
    socket.on('upload_selection',function (selected_deck) {  //aca
       n_uploaded +=1;
       temp_deck[users.indexOf(socket.id)] = selected_deck;
+
       if(n_uploaded == users.length){
             console.log('impresion de decks en server antes');
             for(let i =0; i<users.length;i++){
@@ -118,6 +139,7 @@ io.on("connection", (socket) => {
             for(var i =0; i<users.length;i++){
                console.log(temp_deck[i][0],temp_deck[i][1],temp_deck[i][2],temp_deck[i][3]);
             }
+
             update_decks();
             n_uploaded = 0;
       }
@@ -125,14 +147,28 @@ io.on("connection", (socket) => {
 
    socket.on('chancho',function () {  
       lista_chancho.push(socket.id);
+
       if(lista_chancho.length == 1){
          io.emit('poder_chanchear');
       }
       socket.emit('chancho_input_aceptado');
       if(lista_chancho.length == users.length){
-         io.emit('resultado_chancho', user_dict[lista_chancho.at(-1) ] );
+         if(puntaje[user_dict[lista_chancho.at(-1)]] == ''){
+            puntaje[user_dict[lista_chancho.at(-1)]] += 'chan';
+         }
+         else if(puntaje[user_dict[lista_chancho.at(-1)]] == 'chan'){
+            puntaje[user_dict[lista_chancho.at(-1)]] += 'chi';
+         }
+         else if(puntaje[user_dict[lista_chancho.at(-1)]] ==  'chanchi'){
+            puntaje[user_dict[lista_chancho.at(-1)]] += 'to';
+         }
+         io.emit('resultado_chancho', user_dict[lista_chancho.at(-1)], puntaje, user_dict,users);
       }
 
+   });
+
+   socket.on('finalizar', function () {
+         io.emit('back_to_menu');
    });
 
 });
@@ -148,11 +184,11 @@ function update_decks(){
             
             do{
                aux += 1;
-               if(temp_deck[(i-1 % users.length + users.length) % users.length][aux] != 0){
-                  decks[i][j] = temp_deck[(i-1 % users.length + users.length) % users.length][aux];
+               if(temp_deck[( (i+(1*signo)) % users.length + users.length) % users.length][aux] != 0){
+                  decks[i][j] = temp_deck[( (i+(1*signo)) % users.length + users.length) % users.length][aux];
                   console.log('replaced value');
                }
-            }while(temp_deck[(i-1 % users.length + users.length) % users.length][aux] == 0);
+            }while(temp_deck[((i+(1*signo)) % users.length + users.length) % users.length][aux] == 0);
          }
       }
    }
@@ -165,6 +201,8 @@ function send_decks(){
    for(let i =0; i<users.length;i++){
       io.to(users[i]).emit('update_deck', decks[i]);
    }
+
+   //opcional
    console.log('impresion de decks en server dsp');
    for(let i =0; i<users.length;i++){
       console.log(decks[i][0],decks[i][1],decks[i][2],decks[i][3]);

@@ -57,6 +57,12 @@
     <button class="buttons" id="r3">3 a la derecha</button>
 </div>
 
+<div id="player_list_in_game">
+    <ul id="player_list_in_game_ul">
+
+    </ul>
+</div>
+
 <button id="confirmar">confirmar</button>
 
 
@@ -78,6 +84,8 @@
     var confirm_button = document.getElementById('confirmar');
     var chancho_img = document.getElementById('chancho');
     var log_text = document.getElementById('log_text');
+    var player_list_in_game_ul = document.getElementById('player_list_in_game_ul');
+
     //states
     var is_admin = false;
     var can_choose = false;
@@ -110,17 +118,23 @@
         let li = document.createElement('li');
         li.innerHTML= name; 
         player_list.appendChild(li);
+        player_list_in_game_ul.appendChild(li.cloneNode(true));
         n_players.innerHTML = n;
     });
 
     socket.on('retrieve_names', function (user_dict,users) {
         let aux = 0;
+        while (player_list.lastElementChild) {
+            player_list.removeChild(player_list.lastElementChild);
+            player_list_in_game_ul.removeChild(player_list_in_game_ul.lastElementChild);
+        }  
         for(let i =0;i<users.length;i++){     
             if(user_dict[users[i]] != undefined){     
                 aux+=1;
                 let li = document.createElement('li');
                 li.innerHTML= user_dict[users[i]]; 
                 player_list.appendChild(li);
+                player_list_in_game_ul.appendChild(li.cloneNode(true));
             } 
         
         }
@@ -140,9 +154,6 @@
         sala_espera.style.visibility = 'hidden';
         start_button.style.visibility = 'hidden';
         //ACA
-        while (player_list.lastElementChild) {
-            player_list.removeChild(player_list.lastElementChild);
-        }  
         for(var i =0; i<4;i++){
             cart_n[i].innerHTML = deck[i];
             user_deck[i] = deck[i];
@@ -161,7 +172,7 @@
         if(aux == true){
             window.alert('podes chanchear!!');
             puede_chanchear = true;
-            chancho_img.style.filter = 'grayscale(60%)';
+            chancho_img.style.filter = 'grayscale(70%)';
         }
     });
 
@@ -190,7 +201,7 @@
         if(aux == true){
             window.alert('podes chanchear!!');
             puede_chanchear = true;
-            chancho_img.style.filter = 'grayscale(60%)';
+            chancho_img.style.filter = 'grayscale(70%)';
         }
     });
 
@@ -259,7 +270,6 @@
             socket.emit('l1b');
         }
     });
-
     socket.on('l1',function (x) { 
         n_to_select = 1;
         can_select_card = true;
@@ -273,12 +283,12 @@
             socket.emit('l2b');
         }
     });
-
     socket.on('l2',function (x) { 
         n_to_select = 2;
         can_select_card = true
         log_text.innerHTML = '2 a la izquierda';
     });
+
         //admin selecciona opcion l3
     buttons[2].addEventListener('click',function(e) {
         if(can_choose){
@@ -286,7 +296,6 @@
             socket.emit('l3b');
         }
     });
-
     socket.on('l3',function (x) { 
         n_to_select = 3;
         can_select_card = true;
@@ -295,7 +304,7 @@
 
     socket.on('poder_chanchear', function () {
         puede_chanchear = true;
-        chancho_img.style.filter = 'grayscale(50%)';
+        chancho_img.style.filter = 'grayscale(70%)';
        });
 
     chancho_img.addEventListener('click',function() {
@@ -309,8 +318,31 @@
         chancho_img.style.filter = 'grayscale(0%)';
       });
     
-    socket.on('resultado_chancho', function (name) {
-        window.alert('Perdio '+ name + '!!');
+    //ACTUALIZAR tabla resultados
+    socket.on('resultado_chancho', function (name,puntaje,user_dict,users) {//perdedor ronda 1ero
+        window.alert('Último fue '+ name + '!!');
+        while(player_list_in_game_ul.lastElementChild) { //removes all children
+            player_list_in_game_ul.removeChild(player_list_in_game_ul.lastElementChild);
+        }  
+
+        for(let i =0;i<users.length;i++){  //updates children
+                console.log(user_dict[users[i]]);
+                console.log(user_dict[puntaje[ user_dict[ users[i] ] ]]);
+                let li = document.createElement('li');
+                li.innerHTML= user_dict[users[i]] + ' ' + puntaje[ user_dict[ users[i] ] ];
+                player_list_in_game_ul.appendChild(li);
+                console.log('to append ' + user_dict[users[i]] + puntaje[ user_dict[ users[i] ] ] );
+        }
+        chancho_img.style.filter = 'grayscale(100%)';
+        //definir si alguien ya perdió
+        if(puntaje[name] == 'chanchito'){
+            window.alert('juego finalizado, perdio: '+ name);
+            socket.emit('finalizar');
+        }
+        //empezar nueva ronda si no
+        else{
+            socket.emit('start_game');
+        }
     });
     socket.on('back_to_menu', function () {
         sala_espera.style.visibility = 'visible';
@@ -319,7 +351,43 @@
         }
     });
 
-    //3 botones a la derecha faltan
+    //3 botones a la derecha faltan  ----------------------------
+
+    buttons[3].addEventListener('click',function(e) {
+        if(can_choose){
+            can_choose =false;
+            socket.emit('r1b');
+        }
+    });
+    socket.on('r1',function (x) { 
+        n_to_select = 1;
+        can_select_card = true;
+        log_text.innerHTML = '1 a la derecha';
+    });
+
+    buttons[4].addEventListener('click',function(e) {
+        if(can_choose){
+            can_choose =false;
+            socket.emit('r2b');
+        }
+    });
+    socket.on('r2',function (x) { 
+        n_to_select = 2;
+        can_select_card = true;
+        log_text.innerHTML = '2 a la derecha';
+    });
+
+    buttons[5].addEventListener('click',function(e) {
+        if(can_choose){
+            can_choose =false;
+            socket.emit('r3b');
+        }
+    });
+    socket.on('r3',function (x) { 
+        n_to_select = 3;
+        can_select_card = true;
+        log_text.innerHTML = '3 a la derecha';
+    });
 
     // socket.on('', function () {   });
 

@@ -92,3 +92,13 @@ h1{
 #log_text{
     color: white;
 }
+#player_list_in_game{
+    background-color: white;
+    position: fixed;
+    top: 10%;
+    right: 10%;
+    width: 15%;
+}
+#player_list_in_game_ul{
+    color: black;
+}
