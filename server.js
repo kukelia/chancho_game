@@ -8,9 +8,10 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 app.use(express.static(__dirname));
-http.listen(8000, function() {
-   console.log('listening on *:8000');
-});
+
+http.listen(process.env.PORT || 8000, 
+	() => console.log("Server is running..."));
+
 function shuffle(array) {
    let currentIndex = array.length,  randomIndex;
  
