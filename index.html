@@ -188,8 +188,9 @@
         cart_n[1].style.backgroundColor = 'white';
         cart_n[2].style.backgroundColor = 'white';
         cart_n[3].style.backgroundColor = 'white';
-        tick.style.filter = 'grayscale(100%)';
         log_text.innerHTML = 'esperando siguiente orden';
+        tick.style.filter = 'grayscale(100%)';
+        
         //to optimize
         let aux = true;
         for(let i =1; i<4;i++){
@@ -333,6 +334,15 @@
                 console.log('to append ' + user_dict[users[i]] + puntaje[ user_dict[ users[i] ] ] );
         }
         chancho_img.style.filter = 'grayscale(100%)';
+        can_select_card = false;
+        tick.style.filter = 'grayscale(100%)';
+        selected_n = 0;
+        cart_n[0].style.backgroundColor = 'white';
+        cart_n[1].style.backgroundColor = 'white';
+        cart_n[2].style.backgroundColor = 'white';
+        cart_n[3].style.backgroundColor = 'white';
+        log_text.innerHTML = 'esperando siguiente orden';
+        
         //definir si alguien ya perdió
         if(puntaje[name] == 'chanchito'){
             window.alert('juego finalizado, perdio: '+ name);
