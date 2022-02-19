@@ -53,7 +53,7 @@ var temp_deck=[
 ];
 
 var user_dict = {};
-var puntaje = {};
+var puntaje = {}; //almacena estado de chanchito de c/ player
 var arr_shuffled;
 var n_uploaded = 0;
 var lista_chancho = [];
@@ -70,9 +70,11 @@ io.on("connection", (socket) => {
    socket.on('disconnect', function () {
       console.log('A user disconnected');
       users.splice(users.indexOf(socket.id) ,1);
-      setted_name -=1;
-      delete puntaje[user_dict[socket.id]];
-      delete user_dict[socket.id];
+      if(user_dict[socket.id]){
+         setted_name -=1;
+         delete puntaje[user_dict[socket.id]];
+         delete user_dict[socket.id];
+      }
       io.emit('back_to_menu');
       io.emit('retrieve_names', user_dict,users);
    });

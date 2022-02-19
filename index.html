@@ -74,17 +74,17 @@
 
 <script>
     const socket = io();
-    var sala_espera = document.getElementById('inicio')
-    var name_input = document.getElementById('name_input')
-    var name_form = document.getElementById('name_form');
-    var player_list = document.getElementById("player_list");
-    var n_players = document.getElementById('n_players');
-    var start_button = document.getElementById('start_game');
-    var panel = document.getElementById('panel');
-    var confirm_button = document.getElementById('confirmar');
-    var chancho_img = document.getElementById('chancho');
-    var log_text = document.getElementById('log_text');
-    var player_list_in_game_ul = document.getElementById('player_list_in_game_ul');
+    const sala_espera = document.getElementById('inicio');
+    const name_input = document.getElementById('name_input');
+    const name_form = document.getElementById('name_form');
+    const player_list = document.getElementById("player_list");
+    const n_players = document.getElementById('n_players');
+    const start_button = document.getElementById('start_game');
+    const panel = document.getElementById('panel');
+    const confirm_button = document.getElementById('confirmar');
+    const chancho_img = document.getElementById('chancho');
+    const log_text = document.getElementById('log_text');
+    const player_list_in_game_ul = document.getElementById('player_list_in_game_ul');
 
     //states
     var is_admin = false;
@@ -94,9 +94,9 @@
     var tick = document.getElementById("tick");
 
     //objects
-    var cartas = document.getElementsByClassName('carta');
-
-    var cart_n = [document.getElementById("n1"),document.getElementById("n2"),
+    const cartas = document.getElementsByClassName('carta');
+    const buttons = document.getElementsByClassName('buttons'); //l1 a l3,r1 a r3
+    const cart_n = [document.getElementById("n1"),document.getElementById("n2"),
     document.getElementById("n3"),document.getElementById("n4")];
 
     //user info
@@ -104,7 +104,6 @@
     var selected_deck = [0,0,0,0];
     var selected_n = 0;
     var puede_chanchear = false;
-    var buttons = document.getElementsByClassName('buttons'); //l1 a l3,r1 a r3
 
     document.getElementById("name_form").addEventListener("submit", function(e) {
         e.preventDefault();
