@@ -165,7 +165,7 @@
         }
         if(is_admin == true){
             panel.style.visibility = 'visible';
-            can_choose =true;
+            can_choose = true;
         }
         //to optimize
         let aux = true;
@@ -181,6 +181,7 @@
 
     //MUY IMPORTANTE
     socket.on('update_deck', function (deck) { 
+        puede_chanchear = false;
         for(let i =0; i<4;i++){
             cart_n[i].innerHTML = deck[i];
             user_deck[i] = deck[i];

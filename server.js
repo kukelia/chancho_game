@@ -173,7 +173,7 @@ io.on("connection", (socket) => {
          else{
             io.to(users[0]).emit('nueva ronda_client');
          }
-         lista_chancho.length = 0;
+         lista_chancho = [];
       }
 
    });
