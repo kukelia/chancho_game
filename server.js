@@ -34,7 +34,7 @@ var cards_by_players =[
    [1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6]  //6 players
 ];
 
-var users = [];
+var users = [];  //socket.id de c/ user
 var decks = [
    [0,0,0,0], //player 1
    [0,0,0,0], //player 2
@@ -80,11 +80,11 @@ io.on("connection", (socket) => {
    });
 
    socket.on('set_name', function(name){
-      user_dict[socket.id] = name
+      user_dict[socket.id] = name;
       puntaje[name] = '';
       setted_name +=1;
       io.emit('add_player', name,setted_name);
-      console.log(name, 'connected!!')
+      console.log(name, 'connected!!');
 
       if(socket.id == users[0]){ //PARA HACER ADMIN
          io.to(socket.id).emit('set_admin');
@@ -132,7 +132,6 @@ io.on("connection", (socket) => {
    socket.on('upload_selection',function (selected_deck) {  //aca
       n_uploaded +=1;
       temp_deck[users.indexOf(socket.id)] = selected_deck;
-
       if(n_uploaded == users.length){
             console.log('impresion de decks en server antes');
             for(let i =0; i<users.length;i++){
@@ -155,7 +154,9 @@ io.on("connection", (socket) => {
          io.emit('poder_chanchear');
       }
       socket.emit('chancho_input_aceptado');
+
       if(lista_chancho.length == users.length){
+
          if(puntaje[user_dict[lista_chancho.at(-1)]] == ''){
             puntaje[user_dict[lista_chancho.at(-1)]] += 'chan';
          }
@@ -166,6 +167,13 @@ io.on("connection", (socket) => {
             puntaje[user_dict[lista_chancho.at(-1)]] += 'to';
          }
          io.emit('resultado_chancho', user_dict[lista_chancho.at(-1)], puntaje, user_dict,users);
+         if(puntaje[user_dict[lista_chancho.at(-1)]] ==  'chanchito'){
+            io.to(users[0]).emit('finalizar_client');
+            }
+         else{
+            io.to(users[0]).emit('nueva ronda_client');
+         }
+         lista_chancho.length = 0;
       }
 
    });
