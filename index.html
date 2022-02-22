@@ -96,6 +96,7 @@
     var can_select_card = false;
     var n_to_select;
     var puede_chanchear = false;
+    let round_zero = true;
     var tick = document.getElementById("tick");
 
     //objects
@@ -154,38 +155,19 @@
         socket.emit('start_game');
     });
 
-    socket.on('initial_deck', function (deck) {  //start/new round
-        puede_chanchear = false;
-        sala_espera.style.visibility = 'hidden';
-        start_button.style.visibility = 'hidden';
-        //ACA
-        for(var i =0; i<4;i++){
-            cart_n[i].innerHTML = deck[i];
-            user_deck[i] = deck[i];
-        }
-        if(is_admin == true){
-            panel.style.visibility = 'visible';
-            can_choose = true;
-        }
-        //to optimize
-        let aux = true;
-        for(let i =1; i<4;i++){
-            if(deck[i] != deck[0]){ //aux false si mazo no son 4 iguales
-                aux = false;
-            }
-        }
-        if(aux == true){
-            puede_chanchear = true;
-        }
-    });
-
     //MUY IMPORTANTE
     socket.on('update_deck', function (deck) { 
-        puede_chanchear = false;
-        for(let i =0; i<4;i++){
-            cart_n[i].innerHTML = deck[i];
-            user_deck[i] = deck[i];
+        if(round_zero==true){ //only once when starts
+            sala_espera.style.visibility = 'hidden';
+            start_button.style.visibility = 'hidden';
+            if(is_admin == true){
+            panel.style.visibility = 'visible';
+            }
+            round_zero = false;
         }
+        can_choose = true;
+        puede_chanchear = false;
+        update_deck(deck);
         can_choose =true; //para admin, poder elegir siguiente movimiento
         selected_deck = [0,0,0,0];
         selected_n = 0;
@@ -197,12 +179,7 @@
         tick.style.filter = 'grayscale(100%)';
         
         //to optimize
-        let aux = true;
-        for(let i =1; i<4;i++){
-            if(deck[i] != deck[0]){
-                aux = false;
-            }
-        }
+        let aux = deck_is_chancho(deck);
         if(aux == true){
             puede_chanchear = true;
         }
@@ -346,17 +323,8 @@
         cart_n[3].style.backgroundColor = 'white';
         selected_deck = [0,0,0,0];
         log_text.innerHTML = 'esperando siguiente orden';
-        
-        //definir si alguien ya perdió
-        if(puntaje[name] == 'chanchito'){
-            window.alert('juego finalizado, perdio: '+ name);
-            socket.emit('finalizar');
-        }
-        //empezar nueva ronda si no
-        else{
-            socket.emit('start_game');
-        }
     });
+
     socket.on('back_to_menu', function () {
         sala_espera.style.visibility = 'visible';
         if(is_admin){
@@ -410,6 +378,21 @@
         socket.emit('start_game');
       });
 
+    function deck_is_chancho(deck){
+        let auxa = true;
+        for(let i =1; i<4;i++){
+            if(deck[i] != deck[0]){ //aux false si mazo no son 4 iguales
+                auxa = false;
+            }
+        }
+        return auxa
+    }
+    function update_deck(deck){
+        for(let i =0; i<4;i++){
+            cart_n[i].innerHTML = deck[i];
+            user_deck[i] = deck[i];
+        }
+    }
 
 </script>
 

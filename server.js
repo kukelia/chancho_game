@@ -99,7 +99,7 @@ io.on("connection", (socket) => {
             for(var j=0; j<4;j++){
                decks[i][j] = arr_shuffled[i*4 + j];
             }
-            io.to(users[i]).emit('initial_deck', decks[i]);
+            io.to(users[i]).emit('update_deck', decks[i]);
          }
       }
    });
@@ -167,8 +167,8 @@ io.on("connection", (socket) => {
             puntaje[user_dict[lista_chancho.at(-1)]] += 'to';
          }
          io.emit('resultado_chancho', user_dict[lista_chancho.at(-1)], puntaje, user_dict,users);
-         if(puntaje[user_dict[lista_chancho.at(-1)]] ==  'chanchito'){
-            io.to(users[0]).emit('finalizar_client');
+         if(puntaje[user_dict[lista_chancho.at(-1)]] ==  'chanchito'){ //check if smbody lost or start new round
+            io.to(users[0]).emit('finalizar_client'); //maybe adding delay here
             }
          else{
             io.to(users[0]).emit('nueva ronda_client');
