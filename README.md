@@ -1,5 +1,5 @@
 # chancho_game
-famous card game "chancho", adapted to a multiplayer web version
+Famous card game "chancho", adapted to a multiplayer web version
 Want to play? https://chancho-game.herokuapp.com/
 
 Made with:
